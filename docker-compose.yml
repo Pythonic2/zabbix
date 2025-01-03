@@ -20,9 +20,9 @@ services:
     image: zabbix/zabbix-server-mysql:alpine-6.4.0
     container_name: zabbix-server
     depends_on:
-      - mariadb
+      - postgres
     environment:
-      DB_SERVER_HOST: mariadb
+      DB_SERVER_HOST: postgres
       MYSQL_DATABASE: zabbix
       MYSQL_USER: zabbix
       MYSQL_PASSWORD: zabbix_password
@@ -35,7 +35,7 @@ services:
     depends_on:
       - zabbix-server
     environment:
-      DB_SERVER_HOST: mariadb
+      DB_SERVER_HOST: postgres
       MYSQL_DATABASE: zabbix
       MYSQL_USER: zabbix
       MYSQL_PASSWORD: zabbix_password
