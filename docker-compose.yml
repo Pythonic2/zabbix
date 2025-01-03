@@ -49,5 +49,9 @@ services:
       - zabbix-server
     environment:
       ZBX_SERVER_HOST: zabbix-server
+      ZBX_DOCKER_ENDPOINT: unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "10050:10050"
+
