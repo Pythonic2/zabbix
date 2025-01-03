@@ -47,7 +47,10 @@ services:
     container_name: zabbix-agent
     depends_on:
       - zabbix-server
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      ZBX_SERVER_HOST: zabbix-server
+      - ZBX_DOCKER_ENDPOINT=unix:///var/run/docker.sock
+      - ZBX_SERVER_HOST=zabbix-server
     ports:
       - "10050:10050"
