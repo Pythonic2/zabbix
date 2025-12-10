@@ -1,7 +1,9 @@
+version: "3.9"
+
 services:
 
   mariadb:
-    image: mariadb:10.5
+    image: mariadb:10.11   # versão estável e totalmente compatível com ARM64 e Zabbix 7.0
     container_name: zabbix-mariadb
     environment:
       MYSQL_ROOT_PASSWORD: root_password
@@ -10,6 +12,9 @@ services:
       MYSQL_PASSWORD: zabbix_password
     volumes:
       - zbx_db:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
+    ports:
+      - "3306:3306"
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -17,7 +22,7 @@ services:
       retries: 5
 
   zabbix-server:
-    image: zabbix/zabbix-server-mysql:alpine-6.4.0
+    image: zabbix/zabbix-server-mysql:7.0-latest
     container_name: zabbix-server
     depends_on:
       - mariadb
@@ -32,12 +37,12 @@ services:
       - zbx_server:/var/lib/zabbix
 
   zabbix-web:
-    image: zabbix/zabbix-web-nginx-mysql:alpine-6.4.0
+    image: zabbix/zabbix-web-nginx-mysql:7.0-latest
     container_name: zabbix-web
     depends_on:
       - zabbix-server
     environment:
-      ZBX_SERVER_HOST: zabbix-server        # <--- CORRIGIDO AQUI
+      ZBX_SERVER_HOST: zabbix-server
       ZBX_SERVER_PORT: 10051
       DB_SERVER_HOST: mariadb
       MYSQL_DATABASE: zabbix
@@ -50,7 +55,7 @@ services:
       - zbx_web:/etc/ssl/nginx
 
   zabbix-agent:
-    image: zabbix/zabbix-agent2:alpine-6.4.0
+    image: zabbix/zabbix-agent2:7.0-latest
     container_name: zabbix-agent
     depends_on:
       - zabbix-server
@@ -66,4 +71,3 @@ volumes:
   zbx_db:
   zbx_server:
   zbx_web:
-
